@@ -1,0 +1,44 @@
+.button{
+    -fx-background-color: #eb6123;
+    -fx-text-fill: black;
+    -fx-border-color: #eb6123;
+    -fx-widt: 100px;
+}
+
+.button:hover{
+    -fx-background-color: black;
+    -fx-text-fill: #eb6123;
+    -fx-border-color: #eb6123;
+    -fx-cursor:hand;
+}
+
+.textarea{
+    -fx-text-fill: #eb6123; 
+    -fx-control-inner-background: black;
+    -fx-focus-color: transparent; 
+    -fx-text-box-border: transparent;
+    -fx-background-insets: 0;
+    -fx-background-color: transparent, black, transparent, black;
+}
+
+.textarea *.text{
+    -fx-text-alignment: center;
+}
+
+.textarea .content {
+    -fx-background-color: transparent, black, transparent, black;
+}
+
+.textarea:focused .content {
+    -fx-background-color: transparent, black, transparent, black;
+}
+
+.textarea:focused {
+    -fx-highlight-fill: #7ecfff;
+}
+
+.textarea .content {
+    -fx-padding: 10px;
+    -fx-text-fill: #eb6123;
+    -fx-highlight-fill: #7ecfff;
+}

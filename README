@@ -1,0 +1,149 @@
+HALLOWEEN DOODLEJUMP
+
+Handin: EARLY
+
+Containment Diagram: DoodleJumpContainment.pdf
+
+Overview:
+	- App
+		- Creates an instance of MenuOrganizer and sets the stage to the MenuOrganizer's 
+		  root Pane
+	- Menu Organizer
+		- Has 3 Buttons:
+			- Single Player Button creates a SinglePlayerGameOrganizer and sets the 
+			  stage to show the root pane
+			- MultiPlayer Button creates a MultiPlayerOptions and sets the stage to show the 
+			  root pane
+			- Quit Button calls System.exit(0)
+	- MultiPlayerOptions
+		- Creates an instance of MultiPlayerGameOrganizer, which creates a MultiPlayerGame
+		- Creates an instance of Server, which passes in the MultiPlayerGame
+		- Shows instructions to join the game
+		- Text area shows all players who have joined the game via the server
+	- Server
+		- creates an HttpServer, allowing users to make GET and POST requests to the game
+		- Serves a webpage which allows user to control their player
+		- Javascript on this webpage makes POST requests, which depending on the requests body, 
+		  control the player object
+	- Game Organizer
+		- Organizes the Pane for the games
+		- Creates an instance of the game
+		- Creates buttons pane on the left side
+		- SinglePlayerGameOrganizer:
+			- Creates labels on the right side with current score and timer
+		- MultiPlayerGameOrganizer:
+			- Creates labels on the right side with top 3 players and bottom height
+			- Creates an ArrayList from the MultiPlayerGame's hashmap, then sorts the array list 
+			  based on player's score
+			- Top 3 players are displayed on right side
+	- Game
+		- Controls all of the elements of the game
+		- Updates the players, background (Bottom altitude), platforms, keyhandling, and checking 
+		  for collisions.
+	- Player
+		- Controls the logical components of the player
+		- updates the players position and speed
+		- controls X movement
+		- Checks if player currently has active toy
+	- Doodle
+		- Controls the graphical components of the player
+		- Draws and updates the ghost svg and text below the svg
+	- Platform
+		- draws and updates the platforms according to bottomAltitude and Y coords
+		- Implements the onbounce method, which either applies a toy to the user, or implements 
+		  another method on the player:
+		- BreakPlatform
+			- OnBounce breaks and the two pieces begin rotating and fall down. User does not 
+			  bounce off
+		- RegularPlatform
+			- OnBounce bounces user back up a specified speed
+			- in singleplayer, can have a toy. OnBounce adds the toy to the Player
+		- TrampolinePlatform
+			- OnBounce begins curving the arc. When Arc is at bottom, goes back up and 
+			  bounces player off
+	- Toy
+		- Begins attatched to a Platform
+		- When user bounces on platform, it is removed from the platform and 
+		  added to the player
+		- If active on the player, has specific effect on player
+		- Hat Toy
+			- Lasts for: 3 seconds
+			- Speed: 10/Speed_Factor
+		- Broom Toy
+			- Lasts for: 4 seconds
+			- Speed: 7/Speed_Factor
+		- If active time goes below 0, removes itself from the player
+
+
+
+Design Choices:
+	- Hash Map over ArrayList
+		- In a multiplayergame, I decided to use a HashMap instead of an arraylist. 
+		  This decision was mainly because, when a user makes a post request attempting to control 
+		  their player, they only pass in a playerid. The fastest way to get a player object from 
+		  just an id would be to use a hashmap instead of an arraylist. The Big 0 Notation for 
+		  searching a HashTable is 0(1), whereas searching in ArrayList has Big 0 notation 0(n).
+	- HttpServer
+		- Initially, I wanted to use websockets to allow users to control their players. This wouldve,
+		  allowed users to get live updates on their players location, and data about the game. However,
+		  the java core library does not contain websockets that worked on browns wifi, so instead I
+		  had to use an HttpServer.
+
+
+
+Extra Credit:
+	- ONLINE MULTIPLAYER!!!! (Only over local server)
+		- Creates HTTPServer
+		- Serves styled HTML webpages
+		- Allows users to control their players via GET and POST requests
+		- JavaScript logic: makes a post request on button pressed, and then another post 
+		  Request when the button is released, Similar to how in single player mode the doodle 
+		  moves when a button is pressed and stops moving when the button is released
+		- JavaScript logic to store the Users id 
+		- Continues to work smoothly with up to a few hundred users (tested using Python 
+		  Requests Library by making 400 simultaneous POST requests to move 400 different 
+		  players -- Results with minimal latency or lag)
+		- Uses JavaFX TextArea to smoothly show all of the users in the MuliPlayerOptions 
+		  Menu screen
+		- COULD POTENTIALLY BE PLAYED ON PROJECTOR DURING CLASS???? :) :) 
+	- Different Types of Platforms
+		- Regular
+		- Break platforms (Includes break animation)
+		- Trampoline platforms (includes bounce animation....the graphical logic for this 
+		  uses a JavaFX.Shapes.Arc which bends whenever a user is bouncing on it, 
+		  and then it launches the user)
+	- Toys
+		- Witches Hat
+		- Witches Broomstick
+	- Keep Track of Players Score
+		- In SinglePlayer, displays the users score on the right side labels
+		- In MultiPlayer, displays the top three players's score on the right side labels
+	- Doodle is a composite shape
+		- SVG + Text (Showing the users name)
+		- Additionally, whenever a toy is active, this is essentially added on 
+		  as a shape to the composite shape
+	- Smooth left and Right moving (start moving on button pressed, stop 
+	  moving on button released)
+	- Using Hash Map's
+	- Game Over Animation
+	- Halloween Theme
+	- External CSS Stylesheets
+
+
+To Test Multiplayer:
+	- In order for the grader to test multiplayer ON A DEPARTMENT MACHINE, they 
+	  can open the multiplayer menu, and then navigate in a browser to :"localhost:8500".
+	  This should allow the grader to play a game over the server with only one player. Additionally,
+	  after clicking join game, they can reload the browser and create a new player. This can 
+	  illustrate that the game updates all of the players in the game at once. 
+
+Known Bugs:
+	- HTTP Server Issues
+		- SERVER DOES NOT WORK ON DEPARTMENT MACHINES: PLEASE RUN ON LAPTOP INSTEAD.
+		- Because everything is handled in javascript and there is not authentication,
+		  the server can easily be hacked. Making a post request with the correct data 
+		  would work, even if it is from a source that is not the webpage.
+		- Furthermore, simply reloading the page restarts the webpage and deletes the 
+		  users stored playerid. Also, if the user does not reload the page after the 
+		  game ends, the page does not know that the game is over. The user can then 
+		  control a user with their playerid in a subsequent game.
